@@ -3,6 +3,6 @@ import { baseUrl } from "./appUrl.js";
 
 export const mainApi = createApi({
   reducerPath: "mainApi",
-  baseQuery: fetchBaseQuery({ baseUrl: baseUrl }),
+  baseQuery: fetchBaseQuery({ baseUrl: baseUrl, credentials: "include" }),
   endpoints: (builder) => ({}),
 });

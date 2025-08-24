@@ -16,7 +16,7 @@ import {
   PowerIcon,
   ShoppingCartIcon,
 } from "@heroicons/react/24/solid";
-import { NavLink, useNavigate } from "react-router";
+import { Navigate, NavLink, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../features/user/userSlice.js";
 

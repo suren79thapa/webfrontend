@@ -4,6 +4,7 @@ import RootLayOut from "./components/RootLayOut";
 import Login from "./features/auth/Login.jsx";
 import Register from "./features/auth/Register.jsx";
 import AdminUi from "./features/admin/AdminUi.jsx";
+import ProductAddForm from "./features/admin/ProductAddForm.jsx";
 
 export default function App() {
   const router = createBrowserRouter([
@@ -25,6 +26,10 @@ export default function App() {
         {
           path: "admin-panel",
           element: <AdminUi />,
+        },
+        {
+          path: "product-add-form",
+          element: <ProductAddForm />,
         },
       ],
     },

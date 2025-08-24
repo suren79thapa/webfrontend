@@ -14,6 +14,20 @@ export const productApi = mainApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    addProduct: builder.mutation({
+      query: (q) => ({
+        url: "/products",
+        body: q,
+        headers: {
+          Authorization: q.token,
+        },
+        method: "POST",
+      }),
+    }),
   }),
 });
-export const {useGetProductsQuery,useGetProductQuery} = productApi;
+export const {
+  useGetProductsQuery,
+  useGetProductQuery,
+  useAddProductMutation,
+} = productApi;

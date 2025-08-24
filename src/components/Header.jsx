@@ -97,6 +97,15 @@ function ProfileMenu({ user }) {
                   case "Sign Out":
                     dispatch(removeUser());
                     break;
+                  case "Admin Panel":
+                    nav("/admin-panel");
+                    break;
+                  case "Cart":
+                    nav("/cart");
+                    break;
+                  case "Profile":
+                    nav("/profile");
+                    break;
                 }
                 closeMenu();
               }}

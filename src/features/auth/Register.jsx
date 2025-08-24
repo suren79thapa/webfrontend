@@ -8,6 +8,8 @@ import { Formik } from "formik";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import * as Yup from "yup";
+import { useRegisterUserMutation } from "./authApi.js";
+import toast from "react-hot-toast";
 // now we will be creating the validation schema
 const valSchema = Yup.object().shape({
   username: Yup.string()
@@ -19,6 +21,7 @@ const valSchema = Yup.object().shape({
     .required("Password is required"),
 });
 export default function Register() {
+  const [registeruser, { isLoading }] = useRegisterUserMutation();
   const [show, setShow] = useState(false);
   const nav = useNavigate();
   return (
@@ -29,8 +32,14 @@ export default function Register() {
           email: "",
           password: "",
         }}
-        onSubmit={(val) => {
-          console.log(val);
+        onSubmit={async (val) => {
+          try {
+            await registeruser(val).unwrap();
+            toast.success("user registered successfully");
+            nav(-1);
+          } catch (err) {
+            toast.error(err.data.message);
+          }
         }}
         validationSchema={valSchema}
       >
@@ -62,6 +71,8 @@ export default function Register() {
               <Input
                 type={show ? "text" : "password"}
                 label="Password"
+                value={values.password}
+                onChange={handleChange}
                 name="password"
                 className="pr-20"
                 containerProps={{
@@ -77,7 +88,9 @@ export default function Register() {
                 <i className={`fas fa-${show ? "unlock" : "lock"} fa-lg`} />
               </IconButton>
             </div>
-            <Button type="submit">Submit</Button>
+            <Button loading={isLoading} type="submit">
+              Submit
+            </Button>
           </form>
         )}
       </Formik>

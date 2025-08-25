@@ -8,6 +8,7 @@ import {
   IconButton,
   Typography,
 } from "@material-tailwind/react";
+import RemoveProduct from "./RemoveProduct.jsx";
 
 const TABLE_HEAD = ["Product", "Price", "CreatedAt", "Edit", "Delete"];
 
@@ -81,14 +82,16 @@ export default function AdminUi() {
                       </Typography>
                     </td>
                     <td className="p-4">
-                      <IconButton size="sm" color="purple">
+                      <IconButton
+                        onClick={() => nav(`/product-edit/${_id}`)}
+                        size="sm"
+                        color="purple"
+                      >
                         <i className="fas fa-edit" />
                       </IconButton>
                     </td>
                     <td className="p-4">
-                      <IconButton size="sm" color="pink">
-                        <i className="fas fa-trash" />
-                      </IconButton>
+                      <RemoveProduct id={_id} />
                     </td>
                   </tr>
                 )

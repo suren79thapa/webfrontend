@@ -8,74 +8,54 @@ import {
 import { Formik } from "formik";
 import { useSelector } from "react-redux";
 import * as Yup from "yup";
-import { useAddProductMutation } from "../product/productApi.js";
-import { useNavigate } from "react-router";
+import {
+  useAddProductMutation,
+  useGetProductQuery,
+} from "../product/productApi.js";
+import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
-export const supportedFormats = [
-  "image/jpg",
-  "image/jpeg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-];
-export const commonSchema = {};
-export const valSchema = Yup.object().shape({
-  title: Yup.string()
-    .min(5, "Title must be at least 3 characters")
-    .required("Title is required"),
-  description: Yup.string()
-    .min(10, "Description must be at least 3 characters")
-    .required("Description is required"),
-  price: Yup.number().required("Price is required"),
-  stock: Yup.number().required("Stock is required"),
-  brand: Yup.string().required("Brand is required"),
-  category: Yup.string().required("Category is required"),
-  image: Yup.mixed()
-    .required("image is required")
-    .test("fileType", "invalidFileType", (val) => {
-      return val && supportedFormats.includes(val.type);
-    })
-    .test("fileSize", "File size is too large", (val) => {
-      return val && val.size <= 5 * 1024 * 1024;
-    }),
-});
+import { brands, categories, valSchema } from "./ProductAddForm.jsx";
+import { baseUrl } from "../../app/appUrl.js";
 
-export default function ProductAddForm() {
-  const [addProduct, { isLoading }] = useAddProductMutation();
+export default function ProductEditForm() {
+  const { id } = useParams();
+  const { isLoading, error, data } = useGetProductQuery(id);
   const { user } = useSelector((state) => state.userSlice);
   const nav = useNavigate();
+  if (isLoading) return <h1>Loading...</h1>;
+  if (error) return <h1 className="text-red-500">{error.data}</h1>;
   return (
     <div className="p-5">
       <Formik
         initialValues={{
-          title: "",
-          description: "",
-          price: "",
+          title: data.title,
+          description: data.description,
+          price: data.price,
           image: "",
-          stock: "",
-          brand: "",
-          category: "",
-          imageReview: "",
+          stock: data.stock,
+          brand: data.brand,
+          category: data.category,
+          imageReview: data.image,
         }}
         onSubmit={async (val) => {
-          const formData = new FormData();
-          try {
-            formData.append("title", val.title);
-            formData.append("description", val.description);
-            formData.append("price", val.price);
-            formData.append("stock", val.stock);
-            formData.append("brand", val.brand);
-            formData.append("category", val.category);
-            formData.append("image", val.image);
-            await addProduct({
-              data: formData,
-              token: user.token,
-            }).unwrap();
-            toast.success("Product Added Successfully");
-            nav(-1);
-          } catch (err) {
-            toast.error(err.data.message);
-          }
+          // const formData = new FormData();
+          // try {
+          //   formData.append("title", val.title);
+          //   formData.append("description", val.description);
+          //   formData.append("price", val.price);
+          //   formData.append("stock", val.stock);
+          //   formData.append("brand", val.brand);
+          //   formData.append("category", val.category);
+          //   formData.append("image", val.image);
+          //   await addProduct({
+          //     data: formData,
+          //     token: user.token,
+          //   }).unwrap();
+          //   toast.success("Product Added Successfully");
+          //   nav(-1);
+          // } catch (err) {
+          //   toast.error(err.data.message);
+          // }
         }}
         validationSchema={valSchema}
       >
@@ -137,6 +117,7 @@ export default function ProductAddForm() {
             <div>
               <Select
                 name="category"
+                value={values.category}
                 onChange={(e) => setFieldValue("category", e)}
                 label="Category"
               >
@@ -153,6 +134,7 @@ export default function ProductAddForm() {
             <div>
               <Select
                 name="brand"
+                value={values.brand}
                 onChange={(e) => setFieldValue("brand", e)}
                 label="Brand"
               >
@@ -184,41 +166,19 @@ export default function ProductAddForm() {
               {values.imageReview && !errors.image && (
                 <img
                   className="mt-2 h-[200px]"
-                  src={values.imageReview}
+                  src={`${
+                    values.image
+                      ? values.imageReview
+                      : baseUrl + "/" + values.imageReview
+                  } `}
                   alt=""
                 />
               )}
             </div>
-            <Button loading={isLoading} type="submit">
-              Submit
-            </Button>
+            <Button /*loading={isLoading}*/ type="submit">Submit</Button>
           </form>
         )}
       </Formik>
     </div>
   );
 }
-
-export const categories = [
-  "Mobile",
-  "Laptop",
-  "Tablet",
-  "Accessory",
-  "Shoes",
-  "Clothing",
-  "Electronics",
-  "Home Appliances",
-];
-
-export const brands = [
-  "Apple",
-  "Samsung",
-  "Sony",
-  "Xiaomi",
-  "Dell",
-  "HP",
-  "Nike",
-  "Adidas",
-  "Puma",
-  "Levi's",
-];

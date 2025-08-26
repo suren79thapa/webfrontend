@@ -18,8 +18,7 @@ export const supportedFormats = [
   "image/gif",
   "image/webp",
 ];
-export const commonSchema = {};
-export const valSchema = Yup.object().shape({
+export const commonSchema = {
   title: Yup.string()
     .min(5, "Title must be at least 3 characters")
     .required("Title is required"),
@@ -30,6 +29,9 @@ export const valSchema = Yup.object().shape({
   stock: Yup.number().required("Stock is required"),
   brand: Yup.string().required("Brand is required"),
   category: Yup.string().required("Category is required"),
+};
+export const valSchema = Yup.object({
+  ...commonSchema,
   image: Yup.mixed()
     .required("image is required")
     .test("fileType", "invalidFileType", (val) => {

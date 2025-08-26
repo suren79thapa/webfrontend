@@ -9,18 +9,34 @@ import { Formik } from "formik";
 import { useSelector } from "react-redux";
 import * as Yup from "yup";
 import {
-  useAddProductMutation,
   useGetProductQuery,
+  useUpdateProductMutation,
 } from "../product/productApi.js";
 import { useNavigate, useParams } from "react-router";
 import toast from "react-hot-toast";
-import { brands, categories, valSchema } from "./ProductAddForm.jsx";
+import {
+  brands,
+  categories,
+  commonSchema,
+  supportedFormats,
+} from "./ProductAddForm.jsx";
 import { baseUrl } from "../../app/appUrl.js";
 
+export const editSchema = Yup.object({
+  ...commonSchema,
+  image: Yup.mixed()
+    .test("fileType", "invalid file type", (val) => {
+      return !val ? true : supportedFormats.includes(val.type);
+    })
+    .test("fileSize", "File size is too large", (val) => {
+      return !val ? true : val.size <= 5 * 1024 * 1024;
+    }),
+});
 export default function ProductEditForm() {
   const { id } = useParams();
   const { isLoading, error, data } = useGetProductQuery(id);
   const { user } = useSelector((state) => state.userSlice);
+  const [updateProduct, { isLoading: isUpdating }] = useUpdateProductMutation();
   const nav = useNavigate();
   if (isLoading) return <h1>Loading...</h1>;
   if (error) return <h1 className="text-red-500">{error.data}</h1>;
@@ -38,26 +54,28 @@ export default function ProductEditForm() {
           imageReview: data.image,
         }}
         onSubmit={async (val) => {
-          // const formData = new FormData();
-          // try {
-          //   formData.append("title", val.title);
-          //   formData.append("description", val.description);
-          //   formData.append("price", val.price);
-          //   formData.append("stock", val.stock);
-          //   formData.append("brand", val.brand);
-          //   formData.append("category", val.category);
-          //   formData.append("image", val.image);
-          //   await addProduct({
-          //     data: formData,
-          //     token: user.token,
-          //   }).unwrap();
-          //   toast.success("Product Added Successfully");
-          //   nav(-1);
-          // } catch (err) {
-          //   toast.error(err.data.message);
-          // }
+          const formData = new FormData();
+          try {
+            formData.append("title", val.title);
+            formData.append("description", val.description);
+            formData.append("price", val.price);
+            formData.append("stock", val.stock);
+            formData.append("brand", val.brand);
+            formData.append("category", val.category);
+            if (val.image) formData.append("image", val.image);
+            await updateProduct({
+              data: formData,
+              id: id,
+              token: user?.token,
+            }).unwrap();
+            toast.success("Product Updated Successfully");
+            nav(-1);
+          } catch (err) {
+            console.log(err);
+            toast.error(err.data.message);
+          }
         }}
-        validationSchema={valSchema}
+        validationSchema={editSchema}
       >
         {({
           handleChange,
@@ -155,7 +173,7 @@ export default function ProductEditForm() {
                 type="file"
                 onChange={(e) => {
                   const file = e.target.files[0];
-                  console.log(file);
+                  // console.log(file);
                   setFieldValue("imageReview", URL.createObjectURL(file));
                   setFieldValue("image", file);
                 }}
@@ -175,7 +193,9 @@ export default function ProductEditForm() {
                 />
               )}
             </div>
-            <Button /*loading={isLoading}*/ type="submit">Submit</Button>
+            <Button loading={isUpdating} type="submit">
+              Submit
+            </Button>
           </form>
         )}
       </Formik>

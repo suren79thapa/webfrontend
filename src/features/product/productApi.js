@@ -2,6 +2,13 @@ import { mainApi } from "../../app/mainApi.js";
 
 export const productApi = mainApi.injectEndpoints({
   endpoints: (builder) => ({
+    getTopProducts: builder.query({
+      query: () => ({
+        url: "/top-5-products",
+        method: "GET",
+      }),
+      providesTags: ["Product"],
+    }),
     getProducts: builder.query({
       query: () => ({
         url: "/products",
@@ -51,6 +58,7 @@ export const productApi = mainApi.injectEndpoints({
   }),
 });
 export const {
+  useGetTopProductsQuery,
   useGetProductsQuery,
   useGetProductQuery,
   useAddProductMutation,

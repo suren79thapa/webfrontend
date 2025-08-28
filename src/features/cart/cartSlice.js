@@ -31,4 +31,4 @@ export const cartSlice = createSlice({
   },
 });
 
-export const { setCart } = cartSlice.actions;
+export const { setCart, clearCart } = cartSlice.actions;

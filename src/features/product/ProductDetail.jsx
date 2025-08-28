@@ -2,6 +2,7 @@ import { useParams } from "react-router";
 import { useGetProductQuery } from "./productApi.js";
 import { baseUrl } from "../../app/appUrl.js";
 import { Rating, Typography } from "@material-tailwind/react";
+import AddToCart from "../cart/AddToCart.jsx";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -21,6 +22,7 @@ export default function ProductDetail() {
           <p>Brand: {data.brand}</p>
           <Rating readonly value={data.rating} />
         </div>
+        <AddToCart product={data} />
       </div>
     </div>
   );

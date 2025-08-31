@@ -1,16 +1,31 @@
 import { useDispatch, useSelector } from "react-redux";
 import { baseUrl } from "../../app/appUrl.js";
 import { Button, IconButton } from "@material-tailwind/react";
-import { setCart } from "./cartSlice.js";
+import { clearCart, setCart } from "./cartSlice.js";
+import { useCreateOrderMutation } from "../orders/orderApi.js";
+import toast from "react-hot-toast";
 
 export default function CartPage() {
+  const [createOrder, { isLoading }] = useCreateOrderMutation();
   const { carts } = useSelector((state) => state.cartSlice);
   console.log(carts);
-  const totalAmout = carts.reduce(
+  const totalAmount = carts.reduce(
     (acc, item) => acc + item.qty * item.price,
     0
   );
   const dispatch = useDispatch();
+  const handleOrder = async () => {
+    try {
+      await createOrder({
+        products: carts,
+        totalAmount,
+      }).unwrap();
+      toast.success("Order place successfully");
+      dispatch(clearCart());
+    } catch (err) {
+      toast.error(err.data.message);
+    }
+  };
   return (
     <div className="p-5">
       {carts.length === 0 ? (
@@ -61,8 +76,10 @@ export default function CartPage() {
               </div>
             );
           })}
-          <h1>Total Amout Rs.{totalAmout}</h1>
-          <Button className="mt-5">Place Order</Button>
+          <h1>Total Amount Rs.{totalAmount}</h1>
+          <Button loading={isLoading} onClick={handleOrder} className="mt-5">
+            Place Order
+          </Button>
         </div>
       )}
     </div>

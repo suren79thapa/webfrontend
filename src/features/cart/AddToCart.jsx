@@ -16,7 +16,7 @@ export default function AddToCart({ product }) {
     dispatch(
       setCart({
         qty,
-        id: product.id,
+        id: product._id,
         title: product.title,
         price: product.price,
         image: product.image,
@@ -34,14 +34,14 @@ export default function AddToCart({ product }) {
         <p className="font-body">{qty}</p>
         <IconButton
           onClick={() => setQty(qty + 1)}
-          disabled={product.stock === qty}
+          disabled={product.stock === qty || product.stock === 0}
         >
           <i className="fas fa-add" />
         </IconButton>
       </div>
       <Button
         onClick={handleAddToCart}
-        disabled={!user || user?.role == "Admin"}
+        disabled={!user || user?.role == "Admin" || product.stock === 0}
       >
         Add To Cart
       </Button>

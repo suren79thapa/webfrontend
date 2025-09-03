@@ -10,6 +10,8 @@ import Home from "./features/home/Home.jsx";
 import ProductDetail from "./features/product/ProductDetail.jsx";
 import CartPage from "./features/cart/CartPage.jsx";
 import ProfilePage from "./features/profile/ProfilePage.jsx";
+import OrderDetail from "./features/orders/OrderDetail.jsx";
+import AuthRoute from "./components/AuthRoute.jsx";
 
 export default function App() {
   const router = createBrowserRouter([
@@ -22,13 +24,19 @@ export default function App() {
           element: <Home />,
         },
         {
-          path: "login",
-          element: <Login />,
+          element: <AuthRoute />,
+          children: [
+            {
+              path: "login",
+              element: <Login />,
+            },
+            {
+              path: "register",
+              element: <Register />,
+            },
+          ],
         },
-        {
-          path: "register",
-          element: <Register />,
-        },
+
         {
           path: "product/:id",
           element: <ProductDetail />,
@@ -40,6 +48,10 @@ export default function App() {
         {
           path: "cart",
           element: <CartPage />,
+        },
+        {
+          path: "/order/:id",
+          element: <OrderDetail />,
         },
         {
           path: "admin-panel",

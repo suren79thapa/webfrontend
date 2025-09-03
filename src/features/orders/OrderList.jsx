@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import { useGetOrdersQuery } from "./orderApi.js";
 import { Button, Card, Typography } from "@material-tailwind/react";
 
@@ -5,6 +6,7 @@ const TABLE_HEAD = ["OrdeId", "CreatedAt", "TotalAmount", "OrderDetail"];
 
 export default function OrderList() {
   const { data, isLoading, error } = useGetOrdersQuery();
+  const nav = useNavigate();
   if (isLoading) return <h1>Loading...</h1>;
   if (error) return <h1 className="text-red-500">{error.data}</h1>;
   // console.log(data);
@@ -61,7 +63,9 @@ export default function OrderList() {
                   </Typography>
                 </td>
                 <td className="p-4">
-                  <Button variant="text">Order Detail</Button>
+                  <Button onClick={() => nav(`/order/${_id}`)} variant="text">
+                    Order Detail
+                  </Button>
                 </td>
               </tr>
             ))}

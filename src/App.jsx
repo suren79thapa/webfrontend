@@ -12,6 +12,7 @@ import CartPage from "./features/cart/CartPage.jsx";
 import ProfilePage from "./features/profile/ProfilePage.jsx";
 import OrderDetail from "./features/orders/OrderDetail.jsx";
 import AuthRoute from "./components/AuthRoute.jsx";
+import SearchPage from "./features/search/SearchPage.jsx";
 
 export default function App() {
   const router = createBrowserRouter([
@@ -35,6 +36,10 @@ export default function App() {
               element: <Register />,
             },
           ],
+        },
+        {
+          path: "search",
+          element: <SearchPage />,
         },
 
         {

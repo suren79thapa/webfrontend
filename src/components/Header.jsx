@@ -16,28 +16,41 @@ import {
   PowerIcon,
   ShoppingCartIcon,
 } from "@heroicons/react/24/solid";
-import { Navigate, NavLink, useNavigate } from "react-router";
+import { Navigate, NavLink, useLocation, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../features/user/userSlice.js";
+import SearchInput from "../features/search/SearchInput.jsx";
 
 export default function Header() {
   const { user } = useSelector((state) => state.userSlice);
+  const { pathname } = useLocation();
   return (
     <Navbar className="mx-auto  p-2 lg:rounded-full lg:pl-6">
       <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
-        <Typography
-          as="a"
-          href="#"
-          className="mr-4 ml-2 cursor-pointer py-1.5 font-medium"
-        >
-          Material Tailwind
-        </Typography>
-        {user ? (
-          <ProfileMenu user={user} />
-        ) : (
-          <Button size="sm" variant="text">
-            <NavLink to={"/login"}>Log In</NavLink>
-          </Button>
+        <div>
+          <Typography
+            as="a"
+            href="#"
+            className="mr-4 ml-2 cursor-pointer py-1.5 font-medium"
+          >
+            Material Tailwind
+          </Typography>
+        </div>
+        {pathname !== "/search" && (
+          <div>
+            <SearchInput isNav={true} />
+          </div>
+        )}
+        {pathname !== "/search" && (
+          <div>
+            {user ? (
+              <ProfileMenu user={user} />
+            ) : (
+              <Button size="sm" variant="text">
+                <NavLink to={"/login"}>Log In</NavLink>
+              </Button>
+            )}
+          </div>
         )}
       </div>
     </Navbar>

@@ -9,54 +9,73 @@ export const productApi = mainApi.injectEndpoints({
       }),
       providesTags: ["Product"],
     }),
+
     getProducts: builder.query({
       query: (query) => ({
         url: "/products",
-        params: {
-          search: query,
-        },
+        params: { search: query },
         method: "GET",
       }),
-      providesTags: ["Product"],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.products.map((p) => ({ type: "Product", id: p._id })),
+              { type: "Product", id: "LIST" },
+            ]
+          : [{ type: "Product", id: "LIST" }],
     }),
+
     getProduct: builder.query({
       query: (id) => ({
         url: `/products/${id}`,
         method: "GET",
       }),
-      providesTags: ["Product"],
+      providesTags: (result, error, id) => [{ type: "Product", id }],
     }),
+
     addProduct: builder.mutation({
       query: (q) => ({
         url: "/products",
         body: q.data,
-        headers: {
-          Authorization: q.token,
-        },
+        headers: { Authorization: q.token },
         method: "POST",
       }),
-      invalidatesTags: ["Product"],
+      invalidatesTags: [{ type: "Product", id: "LIST" }],
     }),
+
+    reviewProduct: builder.mutation({
+      query: (q) => ({
+        url: `/products/reviews/${q.id}`,
+        body: q.data,
+        headers: { Authorization: q.token },
+        method: "POST",
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Product", id }],
+    }),
+
     removeProduct: builder.mutation({
       query: (q) => ({
         url: `/products/${q.id}`,
-        headers: {
-          Authorization: q.token,
-        },
+        headers: { Authorization: q.token },
         method: "DELETE",
       }),
-      invalidatesTags: ["Product"],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Product", id: "LIST" },
+        { type: "Product", id },
+      ],
     }),
+
     updateProduct: builder.mutation({
       query: (q) => ({
         url: `/products/${q.id}`,
         body: q.data,
-        headers: {
-          Authorization: q.token,
-        },
+        headers: { Authorization: q.token },
         method: "PATCH",
       }),
-      invalidatesTags: ["Product"],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Product", id },
+        { type: "Product", id: "LIST" },
+      ],
     }),
   }),
 });
@@ -67,4 +86,5 @@ export const {
   useAddProductMutation,
   useRemoveProductMutation,
   useUpdateProductMutation,
+  useReviewProductMutation,
 } = productApi;
